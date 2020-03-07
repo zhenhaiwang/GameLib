@@ -21,7 +21,7 @@ namespace GameLib
             // can't do this in Awake function when working with UISimpleObjectPool component
             if (!(m_ParentScrollRect = transform.parent.GetComponentInParent<ScrollRect>()))
             {
-                Log.Error("[UIChildScrollRect] return null when getting parent ScrollRect");
+                Log.Error("Get null when getting parent ScrollRect");
             }
         }
 

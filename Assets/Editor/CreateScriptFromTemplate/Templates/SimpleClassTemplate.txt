@@ -1,0 +1,18 @@
+﻿&&MenuName=Class&&
+&&Priority=1&&
+using System;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+using GameLib;
+
+/// <summary>
+/// @##Author##
+/// </summary>
+public sealed class ##ClassName##
+{
+	public ##ClassName##()
+	{
+
+	}
+}

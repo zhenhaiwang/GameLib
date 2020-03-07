@@ -10,10 +10,10 @@ namespace GameLib
         public Camera popCamera { get; private set; }
         public Canvas popCanvas { get; private set; }
 
-        private const string LayerName = "UIPopup";
-        private const int LayerDepth = 1;
-        private const int CanvasOrder = 1;
-        private const float MaskAlpha = 0.75f;
+        private const string LAYER_NAME = "UIPopup";
+        private const int LAYER_DEPTH = 1;
+        private const int CANVAS_ORDER = 1;
+        private const float MASK_ALPHA = 0.75f;
 
         private Dictionary<string, PopupContainer> m_PopPath2ContainerDict = new Dictionary<string, PopupContainer>();
         private List<string> m_PopPathList = new List<string>();
@@ -24,13 +24,13 @@ namespace GameLib
 
             DontDestroyOnLoad(cameraObject);
 
-            UnityUtil.SetLayer(cameraObject, LayerMask.NameToLayer(LayerName));
+            UnityUtil.SetLayer(cameraObject, LayerMask.NameToLayer(LAYER_NAME));
 
             popCamera = cameraObject.AddComponent<Camera>();
-            popCamera.cullingMask &= 1 << LayerMask.NameToLayer(LayerName);
+            popCamera.cullingMask &= 1 << LayerMask.NameToLayer(LAYER_NAME);
             popCamera.clearFlags = CameraClearFlags.Depth;
             popCamera.orthographic = true;
-            popCamera.depth = LayerDepth;
+            popCamera.depth = LAYER_DEPTH;
 
             var canvasObject = UnityUtil.AddChild(cameraObject);
             canvasObject.name = "Canvas";
@@ -38,7 +38,7 @@ namespace GameLib
             popCanvas = canvasObject.AddComponent<Canvas>();
             popCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
             popCanvas.worldCamera = popCamera;
-            popCanvas.sortingOrder = CanvasOrder;
+            popCanvas.sortingOrder = CANVAS_ORDER;
 
             var canvasScaler = canvasObject.AddComponent<CanvasScaler>();
             canvasScaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
@@ -48,17 +48,17 @@ namespace GameLib
             canvasObject.AddComponent<GraphicRaycaster>();
         }
 
-        public GameObject Popup(string path, bool modal, bool blur, float alpha = MaskAlpha)
+        public GameObject Popup(string path, bool modal, bool blur, float alpha = MASK_ALPHA)
         {
             return Popup(path, (GameObject)Resources.Load(path), modal, blur, alpha);
         }
 
-        public T Popup<T>(string path, bool modal, bool blur, float alpha = MaskAlpha)
+        public T Popup<T>(string path, bool modal, bool blur, float alpha = MASK_ALPHA)
         {
             return Popup(path, modal, blur, alpha).GetComponent<T>();
         }
 
-        public void PopupAsync(string path, bool modal, bool blur, float alpha = MaskAlpha)
+        public void PopupAsync(string path, bool modal, bool blur, float alpha = MASK_ALPHA)
         {
             StartCoroutine(PopupAsyncCoroutine(path, modal, blur, alpha));
         }

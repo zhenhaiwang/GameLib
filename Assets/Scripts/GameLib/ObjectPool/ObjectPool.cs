@@ -41,7 +41,7 @@ namespace GameLib
         public void Release(T element)
         {
             if (m_Stack.Count > 0 && ReferenceEquals(m_Stack.Peek(), element))
-                Log.Error("Internal error. Trying to destroy object that is already released to pool.");
+                Log.Error("Internal error. Trying to destroy object that is already released to pool");
 
             m_ActionOnRelease.Call(element);
             m_Stack.Push(element);

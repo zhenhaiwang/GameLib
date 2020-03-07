@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b08df807fb1094967838bcae9b7520c8, type: 3}
+  m_Name: Flow Graph
+  m_EditorClassIdentifier: 
+  m_NodeJsonList:
+  - '{"type":0,"id":1,"x":163.0,"y":367.0,"color":[1.0,1.0,1.0,1.0],"linkList":[3],"preList":[],"delay":0.0,"wait":true,"NodeName":"StartNode","prefab":null,"NodeWidth":150.0,"NodeHeight":50.0}'
+  - '{"type":2,"id":2,"x":796.0,"y":196.0,"color":[1.0,1.0,1.0,1.0],"linkList":[],"preList":[4],"delay":0.0,"wait":true,"NodeName":"EndNode","prefab":null,"NodeWidth":150.0,"NodeHeight":50.0}'
+  - '{"targetPosition":{"x":0.0,"y":200.0,"z":0.0,"normalized":{"x":0.0,"y":1.0,"z":0.0,"magnitude":1.0,"sqrMagnitude":1.0},"magnitude":200.0,"sqrMagnitude":40000.0},"type":1,"id":3,"x":378.0,"y":308.0,"color":[1.0,1.0,0.0,1.0],"linkList":[4],"preList":[1],"delay":1.0,"wait":true,"NodeName":"SetPosition","prefab":null,"NodeWidth":150.0,"NodeHeight":50.0}'
+  - '{"targetPosition":{"x":0.0,"y":-200.0,"z":0.0,"normalized":{"x":0.0,"y":-1.0,"z":0.0,"magnitude":1.0,"sqrMagnitude":1.0},"magnitude":200.0,"sqrMagnitude":40000.0},"type":1,"id":4,"x":591.0,"y":251.0,"color":[1.0,1.0,0.0,1.0],"linkList":[2],"preList":[3],"delay":1.0,"wait":true,"NodeName":"SetPosition","prefab":null,"NodeWidth":150.0,"NodeHeight":50.0}'
+  m_PrefabList:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  m_GraphOffset: {x: -24, y: 29}

@@ -25,7 +25,7 @@ namespace GameLib.Effect
             if (!shader.isSupported)
             {
                 NotSupported();
-                Log.Debug("The shader " + shader + " on effect " + ToString() + " is not supported on this platform!");
+                Log.Debug("The shader " + shader + " on effect " + ToString() + " is not supported on this platform");
                 return null;
             }
             else
@@ -77,7 +77,8 @@ namespace GameLib.Effect
 
         public virtual bool CheckResources()
         {
-            Log.Warning("CheckResources () for " + ToString() + " should be overwritten.");
+            Log.Warning("Check resources for " + ToString() + " should be overwritten");
+
             return m_Supported;
         }
 
@@ -131,7 +132,7 @@ namespace GameLib.Effect
 
         protected void ReportAutoDisable()
         {
-            Log.Warning("The image effect " + ToString() + " has been disabled as it's not supported on the current platform.");
+            Log.Warning("The image effect " + ToString() + " has been disabled as it's not supported on the current platform");
         }
 
         /// <summary>
@@ -139,7 +140,7 @@ namespace GameLib.Effect
         /// </summary>
         protected bool CheckShader(Shader shader)
         {
-            Log.Debug("The shader " + shader.ToString() + " on effect " + ToString() + " is not part of the Unity 3.2+ effects suite anymore. For best performance and quality, please ensure you are using the latest Standard Assets Image Effects (Pro only) package.");
+            Log.Debug("The shader " + shader + " on effect " + ToString() + " is not part of the Unity 3.2+ effects suite anymore. For best performance and quality, please ensure you are using the latest Standard Assets Image Effects (Pro only) package");
 
             if (!shader.isSupported)
             {

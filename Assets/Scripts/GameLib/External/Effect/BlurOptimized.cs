@@ -4,7 +4,7 @@ namespace GameLib.Effect
 {
     [ExecuteInEditMode]
     [RequireComponent(typeof(Camera))]
-    [AddComponentMenu("Framework Effect/BlurOptimized")]
+    [AddComponentMenu("GameLib Effect/BlurOptimized")]
     public class BlurOptimized : PostEffectsBase
     {
         [Range(0, 2)]
