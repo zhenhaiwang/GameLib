@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using GameLib;
+using CE;
 
 public sealed class Launcher : UIBaseView
 {
@@ -35,6 +36,23 @@ public sealed class Launcher : UIBaseView
         if (Input.GetKeyDown(KeyCode.G))
         {
             PopupManager.instance.Back();
+        }
+
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            var configDict = CEConfig.GetElementDict();
+            foreach (var config in configDict)
+            {
+                Log.Debug((config.Value as CEConfig).ToString());
+            }
+
+            CEManager.instance.Load(CEArea.CEName);
+
+            var areaDict = CEArea.GetElementDict();
+            foreach (var area in areaDict.CheckNull())
+            {
+                Log.Debug((area.Value as CEArea).ToString());
+            }
         }
     }
 }
