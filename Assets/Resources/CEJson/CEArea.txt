@@ -1,0 +1,14 @@
+{
+  "0": {
+    "AreaId": 0, 
+    "AreaName": "中国"
+  }, 
+  "1": {
+    "AreaId": 1, 
+    "AreaName": "韩国"
+  }, 
+  "2": {
+    "AreaId": 2, 
+    "AreaName": "俄罗斯"
+  }
+}

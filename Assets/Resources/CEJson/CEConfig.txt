@@ -1,0 +1,14 @@
+{
+  "BuildNumber": {
+    "Id": "BuildNumber", 
+    "Value": "0"
+  }, 
+  "ServerName": {
+    "Id": "ServerName", 
+    "Value": "Dev"
+  }, 
+  "UserId": {
+    "Id": "UserId", 
+    "Value": "101"
+  }
+}
