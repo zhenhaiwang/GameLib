@@ -105,7 +105,7 @@ namespace GameLib.Editor
         {
             var paths = new List<string>();
 
-            var dirs = Directory.GetDirectories(Application.dataPath, "Editor/CreateScriptFromTemplate/Templates", SearchOption.AllDirectories);
+            var dirs = Directory.GetDirectories(Application.dataPath, "Templates", SearchOption.AllDirectories);
 
             foreach (var dir in dirs)
             {
