@@ -104,13 +104,7 @@ namespace GameLib.Editor
         private void LoadTemplateFiles()
         {
             var paths = new List<string>();
-
-            var dirs = Directory.GetDirectories(Application.dataPath, "Templates", SearchOption.AllDirectories);
-
-            foreach (var dir in dirs)
-            {
-                paths.AddRange(Directory.GetFiles(dir, "*.txt"));
-            }
+            paths.AddRange(Directory.GetFiles(Path.Combine(Application.dataPath, "Editor/CreateScriptFromTemplate/Templates"), "*.txt"));
 
             m_TemplateDict = new Dictionary<string, TemplateEntry>();
 

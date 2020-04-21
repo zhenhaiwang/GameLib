@@ -1,0 +1,19 @@
+﻿&&MenuName=Singleton&&
+&&Priority=3&&
+using GameLib;
+
+/// <summary>
+/// @##Author##
+/// </summary>
+public sealed class ##ClassName## : Singleton<##ClassName##>
+{
+    protected override void OnInit()
+    {
+
+    }
+
+    protected override void OnDestroy()
+    {
+
+    }
+}

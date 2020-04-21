@@ -1,0 +1,14 @@
+﻿&&MenuName=MonoSingleton&&
+&&Priority=4&&
+using GameLib;
+
+/// <summary>
+/// @##Author##
+/// </summary>
+public sealed class ##ClassName## : MonoSingleton<##ClassName##>
+{
+    protected override void OnDestroy()
+    {
+        base.OnDestroy();
+    }
+}
