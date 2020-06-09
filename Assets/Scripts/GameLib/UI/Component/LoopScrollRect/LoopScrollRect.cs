@@ -531,7 +531,7 @@ namespace GameLib
 
         public void JumpToCell(int index)
         {
-            float value = 0f;
+            float value;
             int constraintCount = contentConstraintCount;
 
             if (constraintCount > 1)
@@ -539,11 +539,25 @@ namespace GameLib
                 int rowOrColumnIndex = index / constraintCount;
                 int rowOrColumnTotalCount = (int)Mathf.Ceil((float)m_TotalCount / constraintCount);
 
-                value = Mathf.Clamp01((float)rowOrColumnIndex / rowOrColumnTotalCount);
+                if (rowOrColumnIndex >= rowOrColumnTotalCount - 1)
+                {
+                    value = 1f;
+                }
+                else
+                {
+                    value = Mathf.Clamp01((float)rowOrColumnIndex / rowOrColumnTotalCount);
+                }
             }
             else
             {
-                value = Mathf.Clamp01((float)index / m_TotalCount);
+                if (index >= m_TotalCount - 1)
+                {
+                    value = 1f;
+                }
+                else
+                {
+                    value = Mathf.Clamp01((float)index / m_TotalCount);
+                }
             }
 
             StartCoroutine(JumpToCellCoroutine(value));
