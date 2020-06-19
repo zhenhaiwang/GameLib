@@ -116,6 +116,30 @@ namespace GameLib
             }
         }
 
+        private RectOffset m_Padding;
+        public RectOffset padding
+        {
+            get
+            {
+                if (m_Padding != null)
+                {
+                    return m_Padding;
+                }
+
+                if (content != null)
+                {
+                    LayoutGroup layoutGroup = content.GetComponent<LayoutGroup>();
+
+                    if (layoutGroup != null)
+                    {
+                        m_Padding = layoutGroup.padding;
+                    }
+                }
+
+                return m_Padding;
+            }
+        }
+
         public int gridStartLineIndex
         {
             get
@@ -644,9 +668,19 @@ namespace GameLib
                         float offset = 0f;
 
                         if (m_DirectionSign == -1)
-                            offset = m_ReverseDirection ? (m_ViewBounds.min.y - m_CellBounds.min.y) : (m_ViewBounds.max.y - m_CellBounds.max.y);
+                        {
+                            float top = padding.top;
+                            float bottom = padding.bottom;
+
+                            offset = m_ReverseDirection ? (m_ViewBounds.min.y - m_CellBounds.min.y + bottom) : (m_ViewBounds.max.y - m_CellBounds.max.y - top);
+                        }
                         else if (m_DirectionSign == 1)
-                            offset = m_ReverseDirection ? (m_CellBounds.max.x - m_ViewBounds.max.x) : (m_CellBounds.min.x - m_ViewBounds.min.x);
+                        {
+                            float left = padding.left;
+                            float right = padding.right;
+
+                            offset = m_ReverseDirection ? (m_CellBounds.max.x - m_ViewBounds.max.x + right) : (m_CellBounds.min.x - m_ViewBounds.min.x - left);
+                        }
 
                         // check if we cannot move on
                         if (m_TotalCount >= 0)
