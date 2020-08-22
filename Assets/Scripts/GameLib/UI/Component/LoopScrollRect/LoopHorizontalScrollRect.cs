@@ -51,11 +51,11 @@ namespace GameLib
         {
             bool changed = false;
 
-            if (viewBounds.max.x > contentBounds.max.x)
+            if (viewBounds.max.x > contentBounds.max.x - padding.right)
             {
                 float size = NewCellAtEnd(), totalSize = size;
 
-                while (size > 0f && viewBounds.max.x > contentBounds.max.x + totalSize)
+                while (size > 0f && viewBounds.max.x > contentBounds.max.x - padding.right + totalSize)
                 {
                     size = NewCellAtEnd();
                     totalSize += size;
@@ -66,11 +66,11 @@ namespace GameLib
                     changed = true;
                 }
             }
-            else if (viewBounds.max.x < contentBounds.max.x - m_Threshold)
+            else if (viewBounds.max.x < contentBounds.max.x - padding.right - m_Threshold)
             {
                 float size = DeleteCellAtEnd(), totalSize = size;
 
-                while (size > 0f && viewBounds.max.x < contentBounds.max.x - m_Threshold - totalSize)
+                while (size > 0f && viewBounds.max.x < contentBounds.max.x - padding.right - m_Threshold - totalSize)
                 {
                     size = DeleteCellAtEnd();
                     totalSize += size;
@@ -82,11 +82,11 @@ namespace GameLib
                 }
             }
 
-            if (viewBounds.min.x < contentBounds.min.x)
+            if (viewBounds.min.x < contentBounds.min.x + padding.left)
             {
                 float size = NewCellAtStart(), totalSize = size;
 
-                while (size > 0f && viewBounds.min.x < contentBounds.min.x - totalSize)
+                while (size > 0f && viewBounds.min.x < contentBounds.min.x + padding.left - totalSize)
                 {
                     size = NewCellAtStart();
                     totalSize += size;
@@ -97,11 +97,11 @@ namespace GameLib
                     changed = true;
                 }
             }
-            else if (viewBounds.min.x > contentBounds.min.x + m_Threshold)
+            else if (viewBounds.min.x > contentBounds.min.x + padding.left + m_Threshold)
             {
                 float size = DeleteCellAtStart(), totalSize = size;
 
-                while (size > 0f && viewBounds.min.x > contentBounds.min.x + m_Threshold + totalSize)
+                while (size > 0f && viewBounds.min.x > contentBounds.min.x + padding.left + m_Threshold + totalSize)
                 {
                     size = DeleteCellAtStart();
                     totalSize += size;

@@ -36,6 +36,7 @@ namespace GameLib
         protected const float EPSILON = 0.01f;
 
         protected int m_DirectionSign;
+
         protected bool m_Draggable = true;
 
         protected int m_CellIndexStart;
@@ -105,7 +106,7 @@ namespace GameLib
                     {
                         if (m_GridLayout.constraint == GridLayoutGroup.Constraint.Flexible)
                         {
-                            Log.Error("Flexible not supported yet");
+                            Log.Error("[LoopScrollRect] flexible not supported yet");
                         }
 
                         m_ContentConstraintCount = m_GridLayout.constraintCount;
@@ -271,6 +272,8 @@ namespace GameLib
 
         [SerializeField] private float m_VerticalScrollbarSpacing;
         public float verticalScrollbarSpacing { get { return m_VerticalScrollbarSpacing; } set { m_VerticalScrollbarSpacing = value; SetDirty(); } }
+
+        [SerializeField] private AnimationCurve m_MoveAnimationCurve = AnimationCurve.Linear(0f, 0f, 1f, 1f);
 
         [SerializeField] private ScrollRectEvent m_OnValueChanged = new ScrollRectEvent();
         public ScrollRectEvent onValueChanged { get { return m_OnValueChanged; } set { m_OnValueChanged = value; } }
@@ -602,45 +605,45 @@ namespace GameLib
             }
         }
 
-        public void ScrollToTop(float speed = 3000f)
+        public void ScrollToTop(float speed = 3000f, Action scrollFinishCallback = null)
         {
             if (m_TotalCount == 0)
             {
                 return;
             }
 
-            ScrollToCell(0, speed);
+            ScrollToCell(0, speed, scrollFinishCallback);
         }
 
-        public void ScrollToBottom(float speed = 3000f)
+        public void ScrollToBottom(float speed = 3000f, Action scrollFinishCallback = null)
         {
             if (m_TotalCount == 0)
             {
                 return;
             }
 
-            ScrollToCell(m_TotalCount - 1, speed);
+            ScrollToCell(m_TotalCount - 1, speed, scrollFinishCallback);
         }
 
-        public void ScrollToCell(int index, float speed = 3000f)
+        public void ScrollToCell(int index, float speed = 3000f, Action scrollFinishCallback = null)
         {
             if (m_TotalCount >= 0 && (index < 0 || index >= m_TotalCount))
             {
-                Log.ErrorFormat("Invalid index {0}", index);
+                Log.ErrorFormat("[LoopScrollRect] invalid index {0}", index);
                 return;
             }
 
             if (speed <= 0f)
             {
-                Log.ErrorFormat("Invalid speed {0}", speed);
+                Log.ErrorFormat("[LoopScrollRect] invalid speed {0}", speed);
                 return;
             }
 
             StopAllCoroutines();
-            StartCoroutine(ScrollToCellCoroutine(index, speed));
+            StartCoroutine(ScrollToCellCoroutine(index, speed, scrollFinishCallback));
         }
 
-        private IEnumerator ScrollToCellCoroutine(int index, float speed)
+        private IEnumerator ScrollToCellCoroutine(int index, float speed, Action scrollFinishCallback = null)
         {
             bool needMoving = true;
 
@@ -650,7 +653,7 @@ namespace GameLib
 
                 if (!m_Dragging)
                 {
-                    float move = 0f;
+                    float move;
 
                     if (index < m_CellIndexStart)
                     {
@@ -662,48 +665,28 @@ namespace GameLib
                     }
                     else
                     {
-                        m_ViewBounds = new Bounds(viewRect.rect.center, viewRect.rect.size);
-
-                        var m_CellBounds = GetBounds4Cell(index);
-                        float offset = 0f;
-
-                        if (m_DirectionSign == -1)
-                        {
-                            float top = padding.top;
-                            float bottom = padding.bottom;
-
-                            offset = m_ReverseDirection ? (m_ViewBounds.min.y - m_CellBounds.min.y + bottom) : (m_ViewBounds.max.y - m_CellBounds.max.y - top);
-                        }
-                        else if (m_DirectionSign == 1)
-                        {
-                            float left = padding.left;
-                            float right = padding.right;
-
-                            offset = m_ReverseDirection ? (m_CellBounds.max.x - m_ViewBounds.max.x + right) : (m_CellBounds.min.x - m_ViewBounds.min.x - left);
-                        }
+                        float offset = GetCellOffset(index);
 
                         // check if we cannot move on
                         if (m_TotalCount >= 0)
                         {
                             if (offset > 0 && m_CellIndexEnd == m_TotalCount && !m_ReverseDirection)
                             {
-                                m_CellBounds = GetBounds4Cell(m_TotalCount - 1);
+                                var cellBounds = GetBounds4Cell(m_TotalCount - 1);
                                 // reach bottom
-                                if ((m_DirectionSign == -1 && m_CellBounds.min.y > m_ViewBounds.min.y) ||
-                                    (m_DirectionSign == 1 && m_CellBounds.max.x < m_ViewBounds.max.x))
+                                if ((m_DirectionSign == -1 && cellBounds.min.y > m_ViewBounds.min.y) ||
+                                    (m_DirectionSign == 1 && cellBounds.max.x < m_ViewBounds.max.x))
                                 {
-                                    needMoving = false;
                                     break;
                                 }
                             }
                             else if (offset < 0 && m_CellIndexStart == 0 && m_ReverseDirection)
                             {
-                                m_CellBounds = GetBounds4Cell(0);
+                                var cellBounds = GetBounds4Cell(0);
                                 // reach top
-                                if ((m_DirectionSign == -1 && m_CellBounds.max.y < m_ViewBounds.max.y) ||
-                                    (m_DirectionSign == 1 && m_CellBounds.min.x > m_ViewBounds.min.x))
+                                if ((m_DirectionSign == -1 && cellBounds.max.y < m_ViewBounds.max.y) ||
+                                    (m_DirectionSign == 1 && cellBounds.min.x > m_ViewBounds.min.x))
                                 {
-                                    needMoving = false;
                                     break;
                                 }
                             }
@@ -726,7 +709,7 @@ namespace GameLib
                     {
                         Vector2 offset = GetVector(move);
 
-                        content.anchoredPosition += offset;
+                        m_Content.anchoredPosition += offset;
                         m_PrevPosition += offset;
                         m_ContentStartPosition += offset;
                     }
@@ -735,6 +718,59 @@ namespace GameLib
 
             StopMovement();
             UpdatePrevData();
+
+            scrollFinishCallback.Call();
+        }
+
+        public void Move(float distance, float time, Action moveFinishCallback = null)
+        {
+            if (Mathf.Abs(distance) < EPSILON || time <= 0f)
+            {
+                moveFinishCallback.Call();
+
+                return;
+            }
+
+            StopAllCoroutines();
+            StartCoroutine(MoveCoroutine(distance, time, moveFinishCallback));
+        }
+
+        private IEnumerator MoveCoroutine(float distance, float time, Action moveFinishCallback = null)
+        {
+            float lastOffset = 0f;
+            float tick = 0f;
+
+            while (tick < time)
+            {
+                yield return new WaitForEndOfFrame();
+
+                tick += Time.deltaTime;
+
+                if (tick > time)
+                {
+                    tick = time;
+                }
+
+                float normalizedTime = Mathf.Clamp01(tick / time);
+                float curveValue = m_MoveAnimationCurve.Evaluate(normalizedTime);
+                float offset = distance * curveValue;
+                float deltaOffset = offset - lastOffset;
+
+                var vectorOffset = GetVector(deltaOffset);
+
+                m_Content.anchoredPosition += vectorOffset;
+                m_PrevPosition += vectorOffset;
+                m_ContentStartPosition += vectorOffset;
+
+                UpdateBounds(true);
+
+                lastOffset = offset;
+            }
+
+            StopMovement();
+            UpdatePrevData();
+
+            moveFinishCallback.Call();
         }
 
         public void EnableDrag(bool draggable)
@@ -751,13 +787,13 @@ namespace GameLib
         {
             StopMovement();
 
-            if (m_DecelerationRate > 0f)
+            if (m_DecelerationRate > 0f && waitForSeconds != null)
             {
                 StartCoroutine(StopDecelerateCoroutine(waitForSeconds));
             }
         }
 
-        private IEnumerator StopDecelerateCoroutine(WaitForSeconds waitForSeconds = null)
+        private IEnumerator StopDecelerateCoroutine(WaitForSeconds waitForSeconds)
         {
             float preDecelerationRate = m_DecelerationRate;
             m_DecelerationRate = 0f;
@@ -820,7 +856,7 @@ namespace GameLib
 
             if (m_TotalCount >= 0 && m_CellIndexStart % contentConstraintCount != 0)
             {
-                Log.Error("Grid will become strange since we can't fill cells in the last line");
+                Log.Error("[LoopScrollRect] grid will become strange since we can't fill cells in the last line");
             }
 
             for (int i = m_Content.childCount - 1; i >= 0; i--)
@@ -889,7 +925,7 @@ namespace GameLib
 
             if (m_TotalCount >= 0 && m_CellIndexStart % contentConstraintCount != 0)
             {
-                Log.Error("Grid will become strange since we can't fill cells in the first line");
+                Log.Error("[LoopScrollRect] grid will become strange since we can't fill cells in the first line");
             }
 
             // Don't `Canvas.ForceUpdateCanvases()` here, or it will new/delete cells to change cellTypeStart/End
@@ -911,6 +947,50 @@ namespace GameLib
                 if (size <= 0f) break;
                 sizeFilled += size;
             }
+        }
+
+        public float GetCellOffset(int index)
+        {
+            float offset = 0f;
+
+            if (index >= 0 && index < m_TotalCount)
+            {
+                m_ViewBounds = new Bounds(viewRect.rect.center, viewRect.rect.size);
+
+                var cellBounds = GetBounds4Cell(index);
+
+                if (m_DirectionSign == -1)
+                {
+                    float top = padding.top;
+                    float bottom = padding.bottom;
+
+                    offset = m_ReverseDirection ? (m_ViewBounds.min.y - cellBounds.min.y + bottom) : (m_ViewBounds.max.y - cellBounds.max.y - top);
+                }
+                else if (m_DirectionSign == 1)
+                {
+                    float left = padding.left;
+                    float right = padding.right;
+
+                    offset = m_ReverseDirection ? (cellBounds.max.x - m_ViewBounds.max.x + right) : (cellBounds.min.x - m_ViewBounds.min.x - left);
+                }
+            }
+
+            return offset;
+        }
+
+        public T GetCell<T>(int index) where T : UIBaseCell
+        {
+            if (CheckCellInsideViewport(index))
+            {
+                var cell = m_Content.GetChild(index - cellIndexStart);
+
+                if (cell != null)
+                {
+                    return cell.GetComponent<T>();
+                }
+            }
+
+            return null;
         }
 
         public bool CheckCellInsideViewport(int index)
@@ -949,7 +1029,7 @@ namespace GameLib
             {
                 Vector2 offset = GetVector(size);
 
-                content.anchoredPosition += offset;
+                m_Content.anchoredPosition += offset;
                 m_PrevPosition += offset;
                 m_ContentStartPosition += offset;
             }
@@ -985,7 +1065,7 @@ namespace GameLib
             {
                 Vector2 offset = GetVector(size);
 
-                content.anchoredPosition -= offset;
+                m_Content.anchoredPosition -= offset;
                 m_PrevPosition -= offset;
                 m_ContentStartPosition -= offset;
             }
@@ -1030,7 +1110,7 @@ namespace GameLib
             {
                 Vector2 offset = GetVector(size);
 
-                content.anchoredPosition -= offset;
+                m_Content.anchoredPosition -= offset;
                 m_PrevPosition -= offset;
                 m_ContentStartPosition -= offset;
             }
@@ -1065,7 +1145,7 @@ namespace GameLib
             {
                 Vector2 offset = GetVector(size);
 
-                content.anchoredPosition += offset;
+                m_Content.anchoredPosition += offset;
                 m_PrevPosition += offset;
                 m_ContentStartPosition += offset;
             }
